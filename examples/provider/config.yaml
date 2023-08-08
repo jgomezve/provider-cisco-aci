@@ -4,10 +4,17 @@ metadata:
   namespace: crossplane-system
   name: example-provider-secret
 type: Opaque
-data:
-  # credentials: BASE64ENCODED_PROVIDER_CREDS
+stringData:
+  credentials: |
+    {
+      "username": "admin",
+      "password": "cisco.123",
+      "url": "https://10.122.18.27",
+      "insecure": true
+    }
+
 ---
-apiVersion: template.crossplane.io/v1alpha1
+apiVersion: aci.crossplane.io/v1alpha1
 kind: ProviderConfig
 metadata:
   name: example

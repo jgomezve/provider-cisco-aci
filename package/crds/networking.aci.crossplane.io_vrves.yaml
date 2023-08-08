@@ -5,18 +5,18 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.11.3
   creationTimestamp: null
-  name: mytypes.sample.template.crossplane.io
+  name: vrves.networking.aci.crossplane.io
 spec:
-  group: sample.template.crossplane.io
+  group: networking.aci.crossplane.io
   names:
     categories:
     - crossplane
     - managed
-    - template
-    kind: MyType
-    listKind: MyTypeList
-    plural: mytypes
-    singular: mytype
+    - aci
+    kind: Vrf
+    listKind: VrfList
+    plural: vrves
+    singular: vrf
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -35,7 +35,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: A MyType is an example API type.
+        description: A Vrf is an example API type.
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -50,7 +50,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: A MyTypeSpec defines the desired state of a MyType.
+            description: A VrfSpec defines the desired state of a Vrf.
             properties:
               deletionPolicy:
                 default: Delete
@@ -66,12 +66,20 @@ spec:
                 - Delete
                 type: string
               forProvider:
-                description: MyTypeParameters are the configurable fields of a MyType.
+                description: VrfParameters are the configurable fields of a Vrf.
                 properties:
                   configurableField:
                     type: string
+                  name:
+                    type: string
+                  nameAlias:
+                    type: string
+                  tenant:
+                    type: string
                 required:
                 - configurableField
+                - name
+                - tenant
                 type: object
               managementPolicy:
                 default: FullControl
@@ -260,17 +268,13 @@ spec:
             - forProvider
             type: object
           status:
-            description: A MyTypeStatus represents the observed state of a MyType.
+            description: A VrfStatus represents the observed state of a Vrf.
             properties:
               atProvider:
-                description: MyTypeObservation are the observable fields of a MyType.
+                description: VrfObservation are the observable fields of a Vrf.
                 properties:
-                  configurableField:
-                    type: string
                   observableField:
                     type: string
-                required:
-                - configurableField
                 type: object
               conditions:
                 description: Conditions of the resource.

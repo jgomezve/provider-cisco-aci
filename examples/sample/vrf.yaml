@@ -1,0 +1,12 @@
+apiVersion: networking.aci.crossplane.io/v1alpha1
+kind: Vrf
+metadata:
+  name: example
+spec:
+  forProvider:
+    name: crossplane-vrf
+    tenant: crossplane
+    configurableField: empty
+    nameAlias: Crosplane
+  providerConfigRef:
+    name: example

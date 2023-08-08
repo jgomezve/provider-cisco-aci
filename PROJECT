@@ -1,0 +1,5 @@
+domain: aci.cisco
+projectName: provider-cisco-aci
+repo: github.com/jgomezve/provider-cisco-aci
+resources:
+version: "3"
