@@ -1,4 +1,4 @@
-apiVersion: meta.pkg.crossplane.io/v1alpha1
+apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
   name: provider-aci
@@ -9,4 +9,4 @@ metadata:
     meta.crossplane.io/description: |
       A aci that can be used to create Crossplane providers.
 spec:
-  package: jgomezve/provider-aci:v0.0.0-7.g3396654.xpkg
+  package: jgomezve/provider-aci:v0.0.0-8.g6a60bfc

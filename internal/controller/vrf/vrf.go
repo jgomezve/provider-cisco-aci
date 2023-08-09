@@ -40,7 +40,6 @@ import (
 	apisv1alpha1 "github.com/jgomezve/provider-aci/apis/v1alpha1"
 	vrfutil "github.com/jgomezve/provider-aci/internal/clients/vrf"
 	"github.com/jgomezve/provider-aci/internal/features"
-	corev1 "k8s.io/api/core/v1"
 )
 
 const (
@@ -118,11 +117,6 @@ func (c *connector) Connect(ctx context.Context, mg resource.Managed) (managed.E
 
 	if err := c.usage.Track(ctx, mg); err != nil {
 		return nil, errors.Wrap(err, errTrackPCUsage)
-	}
-
-	nsList := &corev1.NamespaceList{}
-	if err := c.kube.List(ctx, nsList); err != nil {
-		return nil, err
 	}
 
 	pc := &apisv1alpha1.ProviderConfig{}
