@@ -1,0 +1,10 @@
+apiVersion: application-management.aci.crossplane.io/v1alpha1
+kind: ApplicationProfile
+metadata:
+  name: cp-ap
+spec:
+  forProvider:
+    tenant: crossplane
+    nameAlias: Crosplane-Test-Ap
+  providerConfigRef:
+    name: example

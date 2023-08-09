@@ -20,6 +20,7 @@ package apis
 import (
 	"k8s.io/apimachinery/pkg/runtime"
 
+	applicationmanagement "github.com/jgomezve/provider-aci/apis/application-management/v1alpha1"
 	networking "github.com/jgomezve/provider-aci/apis/networking/v1alpha1"
 	aciv1alpha1 "github.com/jgomezve/provider-aci/apis/v1alpha1"
 )
@@ -29,6 +30,7 @@ func init() {
 	AddToSchemes = append(AddToSchemes,
 		aciv1alpha1.SchemeBuilder.AddToScheme,
 		networking.SchemeBuilder.AddToScheme,
+		applicationmanagement.SchemeBuilder.AddToScheme,
 	)
 }
 

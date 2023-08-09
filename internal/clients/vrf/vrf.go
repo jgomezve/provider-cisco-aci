@@ -8,6 +8,7 @@ import (
 
 func IsUptoDate(s v1alpha1.VrfParameters, t models.VRFAttributes) bool {
 	observed := &v1alpha1.VrfParameters{
+		Tenant:    s.Tenant,
 		Name:      t.Name,
 		NameAlias: t.NameAlias,
 	}

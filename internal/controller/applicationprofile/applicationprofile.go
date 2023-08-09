@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package bridgedomain
+package applicationprofile
 
 import (
 	"context"
@@ -36,17 +36,17 @@ import (
 	aciclient "github.com/ciscoecosystem/aci-go-client/v2/client"
 	"github.com/ciscoecosystem/aci-go-client/v2/models"
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
-	"github.com/jgomezve/provider-aci/apis/networking/v1alpha1"
+	"github.com/jgomezve/provider-aci/apis/application-management/v1alpha1"
 	apisv1alpha1 "github.com/jgomezve/provider-aci/apis/v1alpha1"
-	bridgedomainutil "github.com/jgomezve/provider-aci/internal/clients/bridgedomain"
+	applicationprofileutil "github.com/jgomezve/provider-aci/internal/clients/applicationprofile"
 	"github.com/jgomezve/provider-aci/internal/features"
 )
 
 const (
-	errNotBridgeDomain = "managed resource is not a BridgeDomain custom resource"
-	errTrackPCUsage    = "cannot track ProviderConfig usage"
-	errGetPC           = "cannot get ProviderConfig"
-	errGetCreds        = "cannot get credentials"
+	errNotApplicationProfile = "managed resource is not a ApplicationProfile custom resource"
+	errTrackPCUsage          = "cannot track ProviderConfig usage"
+	errGetPC                 = "cannot get ProviderConfig"
+	errGetCreds              = "cannot get credentials"
 
 	errNewClient = "cannot create new Service"
 )
@@ -54,13 +54,13 @@ const (
 // A NoOpService does nothing.
 type NoOpService struct{}
 
-var (
-	newNoOpService = func(_ []byte) (interface{}, error) { return &NoOpService{}, nil }
-)
+// var (
+// 	newNoOpService = func(_ []byte) (interface{}, error) { return &NoOpService{}, nil }
+// )
 
-// Setup adds a controller that reconciles BridgeDomain managed resources.
+// Setup adds a controller that reconciles ApplicationProfile managed resources.
 func Setup(mgr ctrl.Manager, o controller.Options) error {
-	name := managed.ControllerName(v1alpha1.BridgeDomainGroupKind)
+	name := managed.ControllerName(v1alpha1.ApplicationProfileGroupKind)
 
 	cps := []managed.ConnectionPublisher{managed.NewAPISecretPublisher(mgr.GetClient(), mgr.GetScheme())}
 	if o.Features.Enabled(features.EnableAlphaExternalSecretStores) {
@@ -68,7 +68,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 	}
 
 	r := managed.NewReconciler(mgr,
-		resource.ManagedKind(v1alpha1.BridgeDomainGroupVersionKind),
+		resource.ManagedKind(v1alpha1.ApplicationProfileGroupVersionKind),
 		managed.WithExternalConnecter(&connector{
 			kube:         mgr.GetClient(),
 			usage:        resource.NewProviderConfigUsageTracker(mgr.GetClient(), &apisv1alpha1.ProviderConfigUsage{}),
@@ -82,7 +82,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		Named(name).
 		WithOptions(o.ForControllerRuntime()).
 		WithEventFilter(resource.DesiredStateChanged()).
-		For(&v1alpha1.BridgeDomain{}).
+		For(&v1alpha1.ApplicationProfile{}).
 		Complete(ratelimiter.NewReconciler(name, r, o.GlobalRateLimiter))
 }
 
@@ -109,9 +109,9 @@ type SecretData struct {
 func (c *connector) Connect(ctx context.Context, mg resource.Managed) (managed.ExternalClient, error) {
 
 	var secretData SecretData
-	cr, ok := mg.(*v1alpha1.BridgeDomain)
+	cr, ok := mg.(*v1alpha1.ApplicationProfile)
 	if !ok {
-		return nil, errors.New(errNotBridgeDomain)
+		return nil, errors.New(errNotApplicationProfile)
 	}
 
 	if err := c.usage.Track(ctx, mg); err != nil {
@@ -128,6 +128,7 @@ func (c *connector) Connect(ctx context.Context, mg resource.Managed) (managed.E
 	if err != nil {
 		return nil, errors.Wrap(err, errGetCreds)
 	}
+
 	err = json.Unmarshal(data, &secretData)
 	if err != nil {
 		return nil, err
@@ -150,26 +151,26 @@ type external struct {
 }
 
 func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.ExternalObservation, error) {
-	cr, ok := mg.(*v1alpha1.BridgeDomain)
+	cr, ok := mg.(*v1alpha1.ApplicationProfile)
 	if !ok {
-		return managed.ExternalObservation{}, errors.New(errNotBridgeDomain)
+		return managed.ExternalObservation{}, errors.New(errNotApplicationProfile)
 	}
 
-	dn := fmt.Sprintf("uni/tn-%s/BD-%s", cr.Spec.ForProvider.Tenant, cr.Name)
-	fvBdCont, err := c.apicClient.Get(dn)
+	dn := fmt.Sprintf("uni/tn-%s/ap-%s", cr.Spec.ForProvider.Tenant, cr.Name)
+	fvApCont, err := c.apicClient.Get(dn)
 
 	if err != nil {
 		if fmt.Sprintf("%s", err) != "Error retrieving Object: Object may not exist" {
 			return managed.ExternalObservation{}, err
 		}
 	}
-	if count := models.G(fvBdCont, "totalCount"); count == "0" {
+	if count := models.G(fvApCont, "totalCount"); count == "0" {
 		return managed.ExternalObservation{}, nil
 	}
-	fvBd := models.BridgeDomainFromContainer(fvBdCont)
+	fvAp := models.ApplicationProfileFromContainer(fvApCont)
 
-	if fvBd.DistinguishedName == "" {
-		return managed.ExternalObservation{}, fmt.Errorf("bridge domain %s not found", dn)
+	if fvAp.DistinguishedName == "" {
+		return managed.ExternalObservation{}, fmt.Errorf("application profile %s not found", dn)
 	}
 	// LateInitializer not required for ACI
 
@@ -183,7 +184,7 @@ func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.Ex
 		// // Return false when the external resource exists, but it not up to date
 		// // with the desired managed resource state. This lets the managed
 		// // resource reconciler know that it needs to call Update.
-		ResourceUpToDate: bridgedomainutil.IsUptoDate(c.apicClient, cr, fvBd.BridgeDomainAttributes),
+		ResourceUpToDate: applicationprofileutil.IsUptoDate(cr.Spec.ForProvider, fvAp.ApplicationProfileAttributes),
 
 		// // Return any details that may be required to connect to the external
 		// // resource. These will be stored as the connection secret.
@@ -192,21 +193,20 @@ func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.Ex
 }
 
 func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.ExternalCreation, error) {
-	cr, ok := mg.(*v1alpha1.BridgeDomain)
+	cr, ok := mg.(*v1alpha1.ApplicationProfile)
 	if !ok {
-		return managed.ExternalCreation{}, errors.New(errNotBridgeDomain)
+		return managed.ExternalCreation{}, errors.New(errNotApplicationProfile)
 	}
 
 	fmt.Printf("Creating: %+v", cr)
 	cr.SetConditions(xpv1.Creating())
 
-	fvBdAttr := models.BridgeDomainAttributes{}
-	fvBdAttr.ArpFlood = cr.Spec.ForProvider.ArpFlood
-	fvBd := models.NewBridgeDomain(fmt.Sprintf("BD-%s", cr.Name), fmt.Sprintf("uni/tn-%s", cr.Spec.ForProvider.Tenant), "", fvBdAttr)
-	err := c.apicClient.Save(fvBd)
-	err = c.apicClient.CreateRelationfvRsCtxFromBridgeDomain(fvBd.DistinguishedName, cr.Spec.ForProvider.Vrf)
+	fvApAttr := models.ApplicationProfileAttributes{}
+	fvApAttr.NameAlias = cr.Spec.ForProvider.NameAlias
+	fvAp := models.NewApplicationProfile(fmt.Sprintf("ap-%s", cr.Name), fmt.Sprintf("uni/tn-%s", cr.Spec.ForProvider.Tenant), "", fvApAttr)
+	err := c.apicClient.Save(fvAp)
 	if err != nil {
-		return managed.ExternalCreation{}, errors.Wrap(err, "Cannot create association with VRF")
+		return managed.ExternalCreation{}, errors.Wrap(err, "Cannot create Application Profile")
 	}
 
 	return managed.ExternalCreation{
@@ -217,20 +217,19 @@ func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 }
 
 func (c *external) Update(ctx context.Context, mg resource.Managed) (managed.ExternalUpdate, error) {
-	cr, ok := mg.(*v1alpha1.BridgeDomain)
+	cr, ok := mg.(*v1alpha1.ApplicationProfile)
 	if !ok {
-		return managed.ExternalUpdate{}, errors.New(errNotBridgeDomain)
+		return managed.ExternalUpdate{}, errors.New(errNotApplicationProfile)
 	}
 
 	fmt.Printf("Updating: %+v", cr)
-	fvBdAttr := models.BridgeDomainAttributes{}
-	fvBdAttr.ArpFlood = cr.Spec.ForProvider.ArpFlood
-	fvBd := models.NewBridgeDomain(fmt.Sprintf("BD-%s", cr.Name), fmt.Sprintf("uni/tn-%s", cr.Spec.ForProvider.Tenant), "", fvBdAttr)
-	fvBd.Status = "modified"
-	err := c.apicClient.Save(fvBd)
-	err = c.apicClient.CreateRelationfvRsCtxFromBridgeDomain(fvBd.DistinguishedName, cr.Spec.ForProvider.Vrf)
+	fvApAttr := models.ApplicationProfileAttributes{}
+	fvApAttr.NameAlias = cr.Spec.ForProvider.NameAlias
+	fvAp := models.NewApplicationProfile(fmt.Sprintf("ap-%s", cr.Name), fmt.Sprintf("uni/tn-%s", cr.Spec.ForProvider.Tenant), "", fvApAttr)
+	fvAp.Status = "modified"
+	err := c.apicClient.Save(fvAp)
 	if err != nil {
-		return managed.ExternalUpdate{}, errors.Wrap(err, "Cannot Update Bridge Domain")
+		return managed.ExternalUpdate{}, errors.Wrap(err, "Cannot Update Application Profile")
 	}
 	return managed.ExternalUpdate{
 		// Optionally return any details that may be required to connect to the
@@ -240,14 +239,14 @@ func (c *external) Update(ctx context.Context, mg resource.Managed) (managed.Ext
 }
 
 func (c *external) Delete(ctx context.Context, mg resource.Managed) error {
-	cr, ok := mg.(*v1alpha1.BridgeDomain)
+	cr, ok := mg.(*v1alpha1.ApplicationProfile)
 	if !ok {
-		return errors.New(errNotBridgeDomain)
+		return errors.New(errNotApplicationProfile)
 	}
 
 	cr.SetConditions(xpv1.Deleting())
-	dn := fmt.Sprintf("uni/tn-%s/BD-%s", cr.Spec.ForProvider.Tenant, cr.Name)
-	err := c.apicClient.DeleteByDn(dn, "fvBD")
+	dn := fmt.Sprintf("uni/tn-%s/ap-%s", cr.Spec.ForProvider.Tenant, cr.Name)
+	err := c.apicClient.DeleteByDn(dn, "fvAp")
 	if err != nil {
 		return err
 	}
