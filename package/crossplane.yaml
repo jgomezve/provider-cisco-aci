@@ -9,4 +9,4 @@ metadata:
     meta.crossplane.io/description: |
       A aci that can be used to create Crossplane providers.
 spec:
-  package: jgomezve/provider-aci:v0.0.0-3.g5aa4726.dirty
+  package: jgomezve/provider-aci:v0.0.0-7.g3396654.xpkg
