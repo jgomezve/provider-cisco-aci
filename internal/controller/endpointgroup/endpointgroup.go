@@ -205,6 +205,9 @@ func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 	fvAEPgAttr.PrefGrMemb = cr.Spec.ForProvider.PreferedGroup
 	fvAEPg := models.NewApplicationEPG(fmt.Sprintf("epg-%s", cr.Name), fmt.Sprintf("uni/tn-%s/ap-%s", cr.Spec.ForProvider.Tenant, cr.Spec.ForProvider.ApplicationProfile), "", fvAEPgAttr)
 	err := c.apicClient.Save(fvAEPg)
+	if err != nil {
+		return managed.ExternalCreation{}, errors.Wrap(err, "Cannot create Endpoint Group")
+	}
 	err = c.apicClient.CreateRelationfvRsBdFromApplicationEPG(fvAEPg.DistinguishedName, cr.Spec.ForProvider.BridgeDomain)
 	if err != nil {
 		return managed.ExternalCreation{}, errors.Wrap(err, "Cannot create association with Bridge Domain")
@@ -229,9 +232,12 @@ func (c *external) Update(ctx context.Context, mg resource.Managed) (managed.Ext
 	fvAEPg := models.NewApplicationEPG(fmt.Sprintf("epg-%s", cr.Name), fmt.Sprintf("uni/tn-%s/ap-%s", cr.Spec.ForProvider.Tenant, cr.Spec.ForProvider.ApplicationProfile), "", fvAEPgAttr)
 	fvAEPg.Status = "modified"
 	err := c.apicClient.Save(fvAEPg)
+	if err != nil {
+		return managed.ExternalUpdate{}, errors.Wrap(err, "Cannot Update Endpoint Group")
+	}
 	err = c.apicClient.CreateRelationfvRsBdFromApplicationEPG(fvAEPg.DistinguishedName, cr.Spec.ForProvider.BridgeDomain)
 	if err != nil {
-		return managed.ExternalUpdate{}, errors.Wrap(err, "Cannot Update Bridge Domain")
+		return managed.ExternalUpdate{}, errors.Wrap(err, "Cannot update association with Bridge Domain")
 	}
 	return managed.ExternalUpdate{
 		// Optionally return any details that may be required to connect to the

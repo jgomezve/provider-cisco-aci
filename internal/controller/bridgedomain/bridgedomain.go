@@ -54,9 +54,9 @@ const (
 // A NoOpService does nothing.
 type NoOpService struct{}
 
-var (
-	newNoOpService = func(_ []byte) (interface{}, error) { return &NoOpService{}, nil }
-)
+// var (
+// 	newNoOpService = func(_ []byte) (interface{}, error) { return &NoOpService{}, nil }
+// )
 
 // Setup adds a controller that reconciles BridgeDomain managed resources.
 func Setup(mgr ctrl.Manager, o controller.Options) error {
@@ -204,6 +204,9 @@ func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 	fvBdAttr.ArpFlood = cr.Spec.ForProvider.ArpFlood
 	fvBd := models.NewBridgeDomain(fmt.Sprintf("BD-%s", cr.Name), fmt.Sprintf("uni/tn-%s", cr.Spec.ForProvider.Tenant), "", fvBdAttr)
 	err := c.apicClient.Save(fvBd)
+	if err != nil {
+		return managed.ExternalCreation{}, errors.Wrap(err, "Cannot create Bridge Domain")
+	}
 	err = c.apicClient.CreateRelationfvRsCtxFromBridgeDomain(fvBd.DistinguishedName, cr.Spec.ForProvider.Vrf)
 	if err != nil {
 		return managed.ExternalCreation{}, errors.Wrap(err, "Cannot create association with VRF")
@@ -228,9 +231,12 @@ func (c *external) Update(ctx context.Context, mg resource.Managed) (managed.Ext
 	fvBd := models.NewBridgeDomain(fmt.Sprintf("BD-%s", cr.Name), fmt.Sprintf("uni/tn-%s", cr.Spec.ForProvider.Tenant), "", fvBdAttr)
 	fvBd.Status = "modified"
 	err := c.apicClient.Save(fvBd)
+	if err != nil {
+		return managed.ExternalUpdate{}, errors.Wrap(err, "Cannot update Bridge Domain")
+	}
 	err = c.apicClient.CreateRelationfvRsCtxFromBridgeDomain(fvBd.DistinguishedName, cr.Spec.ForProvider.Vrf)
 	if err != nil {
-		return managed.ExternalUpdate{}, errors.Wrap(err, "Cannot Update Bridge Domain")
+		return managed.ExternalUpdate{}, errors.Wrap(err, "Cannot update association with VRF")
 	}
 	return managed.ExternalUpdate{
 		// Optionally return any details that may be required to connect to the
