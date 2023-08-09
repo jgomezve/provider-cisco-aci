@@ -5,7 +5,7 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.11.3
   creationTimestamp: null
-  name: vrves.networking.aci.crossplane.io
+  name: bridgedomains.networking.aci.crossplane.io
 spec:
   group: networking.aci.crossplane.io
   names:
@@ -13,10 +13,10 @@ spec:
     - crossplane
     - managed
     - aci
-    kind: Vrf
-    listKind: VrfList
-    plural: vrves
-    singular: vrf
+    kind: BridgeDomain
+    listKind: BridgeDomainList
+    plural: bridgedomains
+    singular: bridgedomain
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -35,7 +35,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: A Vrf is an example API type.
+        description: A BridgeDomain is an example API type.
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -50,7 +50,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: A VrfSpec defines the desired state of a Vrf.
+            description: A BridgeDomainSpec defines the desired state of a BridgeDomain.
             properties:
               deletionPolicy:
                 default: Delete
@@ -66,17 +66,19 @@ spec:
                 - Delete
                 type: string
               forProvider:
-                description: VrfParameters are the configurable fields of a Vrf.
+                description: BridgeDomainParameters are the configurable fields of
+                  a BridgeDomain.
                 properties:
-                  name:
-                    type: string
-                  nameAlias:
+                  arpFlood:
                     type: string
                   tenant:
                     type: string
+                  vrf:
+                    type: string
                 required:
-                - name
+                - arpFlood
                 - tenant
+                - vrf
                 type: object
               managementPolicy:
                 default: FullControl
@@ -265,10 +267,11 @@ spec:
             - forProvider
             type: object
           status:
-            description: A VrfStatus represents the observed state of a Vrf.
+            description: A BridgeDomainStatus represents the observed state of a BridgeDomain.
             properties:
               atProvider:
-                description: VrfObservation are the observable fields of a Vrf.
+                description: BridgeDomainObservation are the observable fields of
+                  a BridgeDomain.
                 properties:
                   observableField:
                     type: string

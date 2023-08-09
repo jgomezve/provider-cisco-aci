@@ -25,65 +25,64 @@ import (
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 )
 
-// VrfParameters are the configurable fields of a Vrf.
-type VrfParameters struct {
-	Name   string `json:"name"`
-	Tenant string `json:"tenant"`
-	// +kubebuilder:validation:Optional
-	NameAlias string `json:"nameAlias"`
+// BridgeDomainParameters are the configurable fields of a BridgeDomain.
+type BridgeDomainParameters struct {
+	Tenant   string `json:"tenant"`
+	Vrf      string `json:"vrf"`
+	ArpFlood string `json:"arpFlood"`
 }
 
-// VrfObservation are the observable fields of a Vrf.
-type VrfObservation struct {
+// BridgeDomainObservation are the observable fields of a BridgeDomain.
+type BridgeDomainObservation struct {
 	ObservableField string `json:"observableField,omitempty"`
 }
 
-// A VrfSpec defines the desired state of a Vrf.
-type VrfSpec struct {
+// A BridgeDomainSpec defines the desired state of a BridgeDomain.
+type BridgeDomainSpec struct {
 	xpv1.ResourceSpec `json:",inline"`
-	ForProvider       VrfParameters `json:"forProvider"`
+	ForProvider       BridgeDomainParameters `json:"forProvider"`
 }
 
-// A VrfStatus represents the observed state of a Vrf.
-type VrfStatus struct {
+// A BridgeDomainStatus represents the observed state of a BridgeDomain.
+type BridgeDomainStatus struct {
 	xpv1.ResourceStatus `json:",inline"`
-	AtProvider          VrfObservation `json:"atProvider,omitempty"`
+	AtProvider          BridgeDomainObservation `json:"atProvider,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
-// A Vrf is an example API type.
+// A BridgeDomain is an example API type.
 // +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,aci}
-type Vrf struct {
+type BridgeDomain struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   VrfSpec   `json:"spec"`
-	Status VrfStatus `json:"status,omitempty"`
+	Spec   BridgeDomainSpec   `json:"spec"`
+	Status BridgeDomainStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
-// VrfList contains a list of Vrf
-type VrfList struct {
+// BridgeDomainList contains a list of BridgeDomain
+type BridgeDomainList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Vrf `json:"items"`
+	Items           []BridgeDomain `json:"items"`
 }
 
-// Vrf type metadata.
+// BridgeDomain type metadata.
 var (
-	VrfKind             = reflect.TypeOf(Vrf{}).Name()
-	VrfGroupKind        = schema.GroupKind{Group: Group, Kind: VrfKind}.String()
-	VrfKindAPIVersion   = VrfKind + "." + SchemeGroupVersion.String()
-	VrfGroupVersionKind = SchemeGroupVersion.WithKind(VrfKind)
+	BridgeDomainKind             = reflect.TypeOf(BridgeDomain{}).Name()
+	BridgeDomainGroupKind        = schema.GroupKind{Group: Group, Kind: BridgeDomainKind}.String()
+	BridgeDomainKindAPIVersion   = BridgeDomainKind + "." + SchemeGroupVersion.String()
+	BridgeDomainGroupVersionKind = SchemeGroupVersion.WithKind(BridgeDomainKind)
 )
 
 func init() {
-	SchemeBuilder.Register(&Vrf{}, &VrfList{})
+	SchemeBuilder.Register(&BridgeDomain{}, &BridgeDomainList{})
 }

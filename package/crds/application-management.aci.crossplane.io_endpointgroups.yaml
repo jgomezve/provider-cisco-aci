@@ -5,18 +5,18 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.11.3
   creationTimestamp: null
-  name: vrves.networking.aci.crossplane.io
+  name: endpointgroups.application-management.aci.crossplane.io
 spec:
-  group: networking.aci.crossplane.io
+  group: application-management.aci.crossplane.io
   names:
     categories:
     - crossplane
     - managed
     - aci
-    kind: Vrf
-    listKind: VrfList
-    plural: vrves
-    singular: vrf
+    kind: EndpointGroup
+    listKind: EndpointGroupList
+    plural: endpointgroups
+    singular: endpointgroup
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -35,7 +35,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: A Vrf is an example API type.
+        description: A EndpointGroup is an example API type.
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -50,7 +50,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: A VrfSpec defines the desired state of a Vrf.
+            description: A EndpointGroupSpec defines the desired state of a EndpointGroup.
             properties:
               deletionPolicy:
                 default: Delete
@@ -66,16 +66,20 @@ spec:
                 - Delete
                 type: string
               forProvider:
-                description: VrfParameters are the configurable fields of a Vrf.
+                description: EndpointGroupParameters are the configurable fields of
+                  a EndpointGroup.
                 properties:
-                  name:
+                  applicationProfile:
                     type: string
-                  nameAlias:
+                  bridgeDomain:
+                    type: string
+                  preferedGroup:
                     type: string
                   tenant:
                     type: string
                 required:
-                - name
+                - applicationProfile
+                - bridgeDomain
                 - tenant
                 type: object
               managementPolicy:
@@ -265,10 +269,12 @@ spec:
             - forProvider
             type: object
           status:
-            description: A VrfStatus represents the observed state of a Vrf.
+            description: A EndpointGroupStatus represents the observed state of a
+              EndpointGroup.
             properties:
               atProvider:
-                description: VrfObservation are the observable fields of a Vrf.
+                description: EndpointGroupObservation are the observable fields of
+                  a EndpointGroup.
                 properties:
                   observableField:
                     type: string

@@ -25,65 +25,64 @@ import (
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 )
 
-// VrfParameters are the configurable fields of a Vrf.
-type VrfParameters struct {
-	Name   string `json:"name"`
+// ApplicationProfileParameters are the configurable fields of a ApplicationProfile.
+type ApplicationProfileParameters struct {
 	Tenant string `json:"tenant"`
 	// +kubebuilder:validation:Optional
 	NameAlias string `json:"nameAlias"`
 }
 
-// VrfObservation are the observable fields of a Vrf.
-type VrfObservation struct {
+// ApplicationProfileObservation are the observable fields of a ApplicationProfile.
+type ApplicationProfileObservation struct {
 	ObservableField string `json:"observableField,omitempty"`
 }
 
-// A VrfSpec defines the desired state of a Vrf.
-type VrfSpec struct {
+// A ApplicationProfileSpec defines the desired state of a ApplicationProfile.
+type ApplicationProfileSpec struct {
 	xpv1.ResourceSpec `json:",inline"`
-	ForProvider       VrfParameters `json:"forProvider"`
+	ForProvider       ApplicationProfileParameters `json:"forProvider"`
 }
 
-// A VrfStatus represents the observed state of a Vrf.
-type VrfStatus struct {
+// A ApplicationProfileStatus represents the observed state of a ApplicationProfile.
+type ApplicationProfileStatus struct {
 	xpv1.ResourceStatus `json:",inline"`
-	AtProvider          VrfObservation `json:"atProvider,omitempty"`
+	AtProvider          ApplicationProfileObservation `json:"atProvider,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
-// A Vrf is an example API type.
+// A ApplicationProfile is an example API type.
 // +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,aci}
-type Vrf struct {
+type ApplicationProfile struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   VrfSpec   `json:"spec"`
-	Status VrfStatus `json:"status,omitempty"`
+	Spec   ApplicationProfileSpec   `json:"spec"`
+	Status ApplicationProfileStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
-// VrfList contains a list of Vrf
-type VrfList struct {
+// ApplicationProfileList contains a list of ApplicationProfile
+type ApplicationProfileList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Vrf `json:"items"`
+	Items           []ApplicationProfile `json:"items"`
 }
 
-// Vrf type metadata.
+// ApplicationProfile type metadata.
 var (
-	VrfKind             = reflect.TypeOf(Vrf{}).Name()
-	VrfGroupKind        = schema.GroupKind{Group: Group, Kind: VrfKind}.String()
-	VrfKindAPIVersion   = VrfKind + "." + SchemeGroupVersion.String()
-	VrfGroupVersionKind = SchemeGroupVersion.WithKind(VrfKind)
+	ApplicationProfileKind             = reflect.TypeOf(ApplicationProfile{}).Name()
+	ApplicationProfileGroupKind        = schema.GroupKind{Group: Group, Kind: ApplicationProfileKind}.String()
+	ApplicationProfileKindAPIVersion   = ApplicationProfileKind + "." + SchemeGroupVersion.String()
+	ApplicationProfileGroupVersionKind = SchemeGroupVersion.WithKind(ApplicationProfileKind)
 )
 
 func init() {
-	SchemeBuilder.Register(&Vrf{}, &VrfList{})
+	SchemeBuilder.Register(&ApplicationProfile{}, &ApplicationProfileList{})
 }

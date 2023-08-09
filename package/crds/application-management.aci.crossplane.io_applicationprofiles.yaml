@@ -5,18 +5,18 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.11.3
   creationTimestamp: null
-  name: vrves.networking.aci.crossplane.io
+  name: applicationprofiles.application-management.aci.crossplane.io
 spec:
-  group: networking.aci.crossplane.io
+  group: application-management.aci.crossplane.io
   names:
     categories:
     - crossplane
     - managed
     - aci
-    kind: Vrf
-    listKind: VrfList
-    plural: vrves
-    singular: vrf
+    kind: ApplicationProfile
+    listKind: ApplicationProfileList
+    plural: applicationprofiles
+    singular: applicationprofile
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -35,7 +35,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: A Vrf is an example API type.
+        description: A ApplicationProfile is an example API type.
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -50,7 +50,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: A VrfSpec defines the desired state of a Vrf.
+            description: A ApplicationProfileSpec defines the desired state of a ApplicationProfile.
             properties:
               deletionPolicy:
                 default: Delete
@@ -66,16 +66,14 @@ spec:
                 - Delete
                 type: string
               forProvider:
-                description: VrfParameters are the configurable fields of a Vrf.
+                description: ApplicationProfileParameters are the configurable fields
+                  of a ApplicationProfile.
                 properties:
-                  name:
-                    type: string
                   nameAlias:
                     type: string
                   tenant:
                     type: string
                 required:
-                - name
                 - tenant
                 type: object
               managementPolicy:
@@ -265,10 +263,12 @@ spec:
             - forProvider
             type: object
           status:
-            description: A VrfStatus represents the observed state of a Vrf.
+            description: A ApplicationProfileStatus represents the observed state
+              of a ApplicationProfile.
             properties:
               atProvider:
-                description: VrfObservation are the observable fields of a Vrf.
+                description: ApplicationProfileObservation are the observable fields
+                  of a ApplicationProfile.
                 properties:
                   observableField:
                     type: string

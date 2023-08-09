@@ -25,65 +25,66 @@ import (
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 )
 
-// VrfParameters are the configurable fields of a Vrf.
-type VrfParameters struct {
-	Name   string `json:"name"`
-	Tenant string `json:"tenant"`
+// EndpointGroupParameters are the configurable fields of a EndpointGroup.
+type EndpointGroupParameters struct {
+	Tenant             string `json:"tenant"`
+	ApplicationProfile string `json:"applicationProfile"`
+	BridgeDomain       string `json:"bridgeDomain"`
 	// +kubebuilder:validation:Optional
-	NameAlias string `json:"nameAlias"`
+	PreferedGroup string `json:"preferedGroup"`
 }
 
-// VrfObservation are the observable fields of a Vrf.
-type VrfObservation struct {
+// EndpointGroupObservation are the observable fields of a EndpointGroup.
+type EndpointGroupObservation struct {
 	ObservableField string `json:"observableField,omitempty"`
 }
 
-// A VrfSpec defines the desired state of a Vrf.
-type VrfSpec struct {
+// A EndpointGroupSpec defines the desired state of a EndpointGroup.
+type EndpointGroupSpec struct {
 	xpv1.ResourceSpec `json:",inline"`
-	ForProvider       VrfParameters `json:"forProvider"`
+	ForProvider       EndpointGroupParameters `json:"forProvider"`
 }
 
-// A VrfStatus represents the observed state of a Vrf.
-type VrfStatus struct {
+// A EndpointGroupStatus represents the observed state of a EndpointGroup.
+type EndpointGroupStatus struct {
 	xpv1.ResourceStatus `json:",inline"`
-	AtProvider          VrfObservation `json:"atProvider,omitempty"`
+	AtProvider          EndpointGroupObservation `json:"atProvider,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
-// A Vrf is an example API type.
+// A EndpointGroup is an example API type.
 // +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,aci}
-type Vrf struct {
+type EndpointGroup struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   VrfSpec   `json:"spec"`
-	Status VrfStatus `json:"status,omitempty"`
+	Spec   EndpointGroupSpec   `json:"spec"`
+	Status EndpointGroupStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
-// VrfList contains a list of Vrf
-type VrfList struct {
+// EndpointGroupList contains a list of EndpointGroup
+type EndpointGroupList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Vrf `json:"items"`
+	Items           []EndpointGroup `json:"items"`
 }
 
-// Vrf type metadata.
+// EndpointGroup type metadata.
 var (
-	VrfKind             = reflect.TypeOf(Vrf{}).Name()
-	VrfGroupKind        = schema.GroupKind{Group: Group, Kind: VrfKind}.String()
-	VrfKindAPIVersion   = VrfKind + "." + SchemeGroupVersion.String()
-	VrfGroupVersionKind = SchemeGroupVersion.WithKind(VrfKind)
+	EndpointGroupKind             = reflect.TypeOf(EndpointGroup{}).Name()
+	EndpointGroupGroupKind        = schema.GroupKind{Group: Group, Kind: EndpointGroupKind}.String()
+	EndpointGroupKindAPIVersion   = EndpointGroupKind + "." + SchemeGroupVersion.String()
+	EndpointGroupGroupVersionKind = SchemeGroupVersion.WithKind(EndpointGroupKind)
 )
 
 func init() {
-	SchemeBuilder.Register(&Vrf{}, &VrfList{})
+	SchemeBuilder.Register(&EndpointGroup{}, &EndpointGroupList{})
 }

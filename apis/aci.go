@@ -20,7 +20,8 @@ package apis
 import (
 	"k8s.io/apimachinery/pkg/runtime"
 
-	vrf "github.com/jgomezve/provider-aci/apis/networking/v1alpha1"
+	applicationmanagement "github.com/jgomezve/provider-aci/apis/application-management/v1alpha1"
+	networking "github.com/jgomezve/provider-aci/apis/networking/v1alpha1"
 	aciv1alpha1 "github.com/jgomezve/provider-aci/apis/v1alpha1"
 )
 
@@ -28,7 +29,8 @@ func init() {
 	// Register the types with the Scheme so the components can map objects to GroupVersionKinds and back
 	AddToSchemes = append(AddToSchemes,
 		aciv1alpha1.SchemeBuilder.AddToScheme,
-		vrf.SchemeBuilder.AddToScheme,
+		networking.SchemeBuilder.AddToScheme,
+		applicationmanagement.SchemeBuilder.AddToScheme,
 	)
 }
 

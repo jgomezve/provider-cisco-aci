@@ -1,0 +1,11 @@
+apiVersion: networking.aci.crossplane.io/v1alpha1
+kind: BridgeDomain
+metadata:
+  name: brd-cp
+spec:
+  forProvider:
+    tenant: crossplane
+    arpFlood: 'yes'
+    vrf: test
+  providerConfigRef:
+    name: example

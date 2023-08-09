@@ -1,0 +1,12 @@
+apiVersion: application-management.aci.crossplane.io/v1alpha1
+kind: EndpointGroup
+metadata:
+  name: cp-epg
+spec:
+  forProvider:
+    tenant: crossplane
+    applicationProfile: test
+    bridgeDomain: myBd
+    preferedGroup: 'include'
+  providerConfigRef:
+    name: example
