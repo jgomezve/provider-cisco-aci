@@ -20,6 +20,7 @@ import (
 	"github.com/crossplane/crossplane-runtime/pkg/controller"
 	ctrl "sigs.k8s.io/controller-runtime"
 
+	"github.com/jgomezve/provider-aci/internal/controller/bridgedomain"
 	"github.com/jgomezve/provider-aci/internal/controller/config"
 	"github.com/jgomezve/provider-aci/internal/controller/vrf"
 )
@@ -30,6 +31,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
 		config.Setup,
 		vrf.Setup,
+		bridgedomain.Setup,
 	} {
 		if err := setup(mgr, o); err != nil {
 			return err
