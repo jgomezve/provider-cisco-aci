@@ -6,7 +6,6 @@ spec:
   forProvider:
     name: crossplane-vrf
     tenant: crossplane
-    configurableField: empty
     nameAlias: Crosplane
   providerConfigRef:
     name: example
