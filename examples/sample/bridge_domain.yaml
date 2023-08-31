@@ -1,9 +1,12 @@
 apiVersion: networking.aci.crossplane.io/v1alpha1
 kind: BridgeDomain
 metadata:
-  name: brd-cp
+  name: bd-crossplane-k8s
+  annotations:
+    crossplane.io/external-name: bd-crossplane-aci
 spec:
   forProvider:
+    name: bd-brossplane-aci
     tenant: crossplane
     arpFlood: 'yes'
     vrf: test

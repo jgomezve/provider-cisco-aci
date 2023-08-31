@@ -1,0 +1,10 @@
+apiVersion: aci.cisco.com/v1alpha1
+kind: NetworkZone
+metadata:
+  name: dmz
+  annotations:
+    crossplane.io/external-name: dmz
+spec:
+  name: DMZ
+  tenant: crossplane
+  fabric: example

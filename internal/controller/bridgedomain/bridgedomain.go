@@ -155,7 +155,7 @@ func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.Ex
 		return managed.ExternalObservation{}, errors.New(errNotBridgeDomain)
 	}
 
-	dn := fmt.Sprintf("uni/tn-%s/BD-%s", cr.Spec.ForProvider.Tenant, cr.Name)
+	dn := fmt.Sprintf("uni/tn-%s/BD-%s", cr.Spec.ForProvider.Tenant, cr.Spec.ForProvider.Name)
 	fvBdCont, err := c.apicClient.Get(dn)
 
 	if err != nil {
@@ -202,7 +202,7 @@ func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 
 	fvBdAttr := models.BridgeDomainAttributes{}
 	fvBdAttr.ArpFlood = cr.Spec.ForProvider.ArpFlood
-	fvBd := models.NewBridgeDomain(fmt.Sprintf("BD-%s", cr.Name), fmt.Sprintf("uni/tn-%s", cr.Spec.ForProvider.Tenant), "", fvBdAttr)
+	fvBd := models.NewBridgeDomain(fmt.Sprintf("BD-%s", cr.Spec.ForProvider.Name), fmt.Sprintf("uni/tn-%s", cr.Spec.ForProvider.Tenant), "", fvBdAttr)
 	err := c.apicClient.Save(fvBd)
 	if err != nil {
 		return managed.ExternalCreation{}, errors.Wrap(err, "Cannot create Bridge Domain")
@@ -228,7 +228,7 @@ func (c *external) Update(ctx context.Context, mg resource.Managed) (managed.Ext
 	fmt.Printf("Updating: %+v", cr)
 	fvBdAttr := models.BridgeDomainAttributes{}
 	fvBdAttr.ArpFlood = cr.Spec.ForProvider.ArpFlood
-	fvBd := models.NewBridgeDomain(fmt.Sprintf("BD-%s", cr.Name), fmt.Sprintf("uni/tn-%s", cr.Spec.ForProvider.Tenant), "", fvBdAttr)
+	fvBd := models.NewBridgeDomain(fmt.Sprintf("BD-%s", cr.Spec.ForProvider.Name), fmt.Sprintf("uni/tn-%s", cr.Spec.ForProvider.Tenant), "", fvBdAttr)
 	fvBd.Status = "modified"
 	err := c.apicClient.Save(fvBd)
 	if err != nil {
@@ -252,7 +252,7 @@ func (c *external) Delete(ctx context.Context, mg resource.Managed) error {
 	}
 
 	cr.SetConditions(xpv1.Deleting())
-	dn := fmt.Sprintf("uni/tn-%s/BD-%s", cr.Spec.ForProvider.Tenant, cr.Name)
+	dn := fmt.Sprintf("uni/tn-%s/BD-%s", cr.Spec.ForProvider.Tenant, cr.Spec.ForProvider.Name)
 	err := c.apicClient.DeleteByDn(dn, "fvBD")
 	if err != nil {
 		return err

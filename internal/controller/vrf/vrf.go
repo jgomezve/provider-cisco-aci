@@ -157,7 +157,7 @@ func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.Ex
 		return managed.ExternalObservation{}, errors.New(errNotVrf)
 	}
 
-	dn := fmt.Sprintf("uni/tn-%s/ctx-%s", cr.Spec.ForProvider.Tenant, cr.Name)
+	dn := fmt.Sprintf("uni/tn-%s/ctx-%s", cr.Spec.ForProvider.Tenant, cr.Spec.ForProvider.Name)
 	fvCtxCont, err := c.apicClient.Get(dn)
 
 	if err != nil {
@@ -176,6 +176,9 @@ func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.Ex
 	// LateInitializer not required for ACI
 
 	cr.SetConditions(xpv1.Available())
+
+	cr.Status.AtProvider.PcTag = models.G(fvCtxCont.S("imdata").Index(0).S("fvCtx", "attributes"), "pcTag")
+	cr.Status.AtProvider.Dn = models.G(fvCtxCont.S("imdata").Index(0).S("fvCtx", "attributes"), "dn")
 	return managed.ExternalObservation{
 		// // Return false when the external resource does not exist. This lets
 		// // the managed resource reconciler know that it needs to call Create to
@@ -204,7 +207,7 @@ func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 
 	fvCtxAttr := models.VRFAttributes{}
 	fvCtxAttr.NameAlias = cr.Spec.ForProvider.NameAlias
-	fvCtx := models.NewVRF(fmt.Sprintf("ctx-%s", cr.Name), fmt.Sprintf("uni/tn-%s", cr.Spec.ForProvider.Tenant), "", fvCtxAttr)
+	fvCtx := models.NewVRF(fmt.Sprintf("ctx-%s", cr.Spec.ForProvider.Name), fmt.Sprintf("uni/tn-%s", cr.Spec.ForProvider.Tenant), "", fvCtxAttr)
 	err := c.apicClient.Save(fvCtx)
 	if err != nil {
 		return managed.ExternalCreation{}, errors.Wrap(err, "Cannot create VRF")
@@ -226,7 +229,7 @@ func (c *external) Update(ctx context.Context, mg resource.Managed) (managed.Ext
 	fmt.Printf("Updating: %+v", cr)
 	fvCtxAttr := models.VRFAttributes{}
 	fvCtxAttr.NameAlias = cr.Spec.ForProvider.NameAlias
-	fvCtx := models.NewVRF(fmt.Sprintf("ctx-%s", cr.Name), fmt.Sprintf("uni/tn-%s", cr.Spec.ForProvider.Tenant), "", fvCtxAttr)
+	fvCtx := models.NewVRF(fmt.Sprintf("ctx-%s", cr.Spec.ForProvider.Name), fmt.Sprintf("uni/tn-%s", cr.Spec.ForProvider.Tenant), "", fvCtxAttr)
 	fvCtx.Status = "modified"
 	err := c.apicClient.Save(fvCtx)
 	if err != nil {
@@ -246,7 +249,7 @@ func (c *external) Delete(ctx context.Context, mg resource.Managed) error {
 	}
 
 	cr.SetConditions(xpv1.Deleting())
-	dn := fmt.Sprintf("uni/tn-%s/ctx-%s", cr.Spec.ForProvider.Tenant, cr.Name)
+	dn := fmt.Sprintf("uni/tn-%s/ctx-%s", cr.Spec.ForProvider.Tenant, cr.Spec.ForProvider.Name)
 	err := c.apicClient.DeleteByDn(dn, "fvCtx")
 	if err != nil {
 		return err
