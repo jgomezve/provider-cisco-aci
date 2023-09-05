@@ -1,0 +1,33 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xnetworkzones.aci.cisco.com
+spec:
+  group: aci.cisco.com
+  names:
+    kind: xNetworkZone
+    plural: xnetworkzones
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              name:
+                type: string
+              tenant:
+                type: string
+              fabric:
+                type: string
+            required:
+              - name
+              - tenant
+              - fabric
+    served: true
+    referenceable: true
+  claimNames:
+    kind: NetworkZoneClaim
+    plural: networkzonesclaim

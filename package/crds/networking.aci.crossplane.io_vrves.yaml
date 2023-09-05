@@ -32,6 +32,14 @@ spec:
     - jsonPath: .metadata.creationTimestamp
       name: AGE
       type: date
+    - description: Distinguished Name
+      jsonPath: .status.atProvider.dn
+      name: DN
+      type: string
+    - description: PcTag
+      jsonPath: .status.atProvider.pctag
+      name: PCTAG
+      type: string
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -270,7 +278,9 @@ spec:
               atProvider:
                 description: VrfObservation are the observable fields of a Vrf.
                 properties:
-                  observableField:
+                  dn:
+                    type: string
+                  pctag:
                     type: string
                 type: object
               conditions:

@@ -71,12 +71,14 @@ spec:
                 properties:
                   arpFlood:
                     type: string
+                  name:
+                    type: string
                   tenant:
                     type: string
                   vrf:
                     type: string
                 required:
-                - arpFlood
+                - name
                 - tenant
                 - vrf
                 type: object

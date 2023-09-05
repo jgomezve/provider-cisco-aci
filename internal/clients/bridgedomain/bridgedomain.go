@@ -13,15 +13,16 @@ import (
 func IsUptoDate(a *aciclient.Client, s *v1alpha1.BridgeDomain, t models.BridgeDomainAttributes) bool {
 
 	vrfName := ""
-	dn := fmt.Sprintf("uni/tn-%s/BD-%s", s.Spec.ForProvider.Tenant, s.Name)
+	dn := fmt.Sprintf("uni/tn-%s/BD-%s", s.Spec.ForProvider.Tenant, s.Spec.ForProvider.Name)
 	fvRsCtxData, err := a.ReadRelationfvRsCtxFromBridgeDomain(dn)
-	if err == nil {
+	if err == nil && fvRsCtxData != "" {
 		vrfName = strings.TrimPrefix(strings.Split(fvRsCtxData.(string), "/")[2], "ctx-")
 	}
 
 	observed := &v1alpha1.BridgeDomainParameters{
 		ArpFlood: t.ArpFlood,
 		Vrf:      vrfName,
+		Name:     t.Name,
 		Tenant:   s.Spec.ForProvider.Tenant,
 	}
 

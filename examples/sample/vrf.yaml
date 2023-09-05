@@ -1,12 +1,14 @@
 apiVersion: networking.aci.crossplane.io/v1alpha1
 kind: Vrf
 metadata:
-  name: example
+  name: k8s-vrf-name
+  annotations:
+    crossplane.io/external-name: test
 spec:
+  managementPolicies: ["Observe"]
   forProvider:
-    name: crossplane-vrf
+    name: test
     tenant: crossplane
-    configurableField: empty
-    nameAlias: Crosplane
+    nameAlias: the_vrf
   providerConfigRef:
     name: example

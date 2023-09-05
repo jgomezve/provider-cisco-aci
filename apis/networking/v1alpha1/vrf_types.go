@@ -35,7 +35,8 @@ type VrfParameters struct {
 
 // VrfObservation are the observable fields of a Vrf.
 type VrfObservation struct {
-	ObservableField string `json:"observableField,omitempty"`
+	Dn    string `json:"dn,omitempty"`
+	PcTag string `json:"pctag,omitempty"`
 }
 
 // A VrfSpec defines the desired state of a Vrf.
@@ -57,6 +58,8 @@ type VrfStatus struct {
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
+// +kubebuilder:printcolumn:name="DN",type="string",JSONPath=".status.atProvider.dn",description="Distinguished Name"
+// +kubebuilder:printcolumn:name="PCTAG",type="string",JSONPath=".status.atProvider.pctag",description="PcTag"
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,aci}
 type Vrf struct {

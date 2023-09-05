@@ -1,0 +1,75 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: network-zone
+spec:
+  patchSets:
+    - name: my-patchset
+      patches:
+      - type: FromCompositeFieldPath
+        fromFieldPath: spec.tenant
+        toFieldPath: spec.forProvider.tenant
+      - type: FromCompositeFieldPath
+        fromFieldPath: spec.fabric
+        toFieldPath: spec.providerConfigRef.name
+  resources:
+    - name: Virtual-Routing-Forwarding
+      base:
+        apiVersion: networking.aci.crossplane.io/v1alpha1
+        kind: Vrf
+      patches:
+        - type: PatchSet
+          patchSetName: my-patchset
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: spec.name
+            strategy: string
+            string:
+              fmt: "vrf-%s"
+          toFieldPath: spec.forProvider.name
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: spec.name
+            strategy: string
+            string:
+              fmt: "vrf-%s"
+          toFieldPath: metadata.annotations["crossplane.io/external-name"]
+    - name: Bridge-Domain
+      base:
+        apiVersion: networking.aci.crossplane.io/v1alpha1
+        kind: BridgeDomain
+        spec:
+          forProvider:
+            arpFlood: 'no'
+      patches:
+        - type: PatchSet
+          patchSetName: my-patchset
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: spec.name
+            strategy: string
+            string:
+              fmt: "bd-%s"
+          toFieldPath: spec.forProvider.name
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: spec.name
+            strategy: string
+            string:
+              fmt: "bd-%s"
+          toFieldPath: metadata.annotations["crossplane.io/external-name"]
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: spec.name
+            strategy: string
+            string:
+              fmt: "vrf-%s"
+          toFieldPath: spec.forProvider.vrf
+  compositeTypeRef:
+    apiVersion: aci.cisco.com/v1alpha1
+    kind: NetworkZone

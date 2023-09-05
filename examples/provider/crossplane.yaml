@@ -1,0 +1,12 @@
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-aci
+  annotations:
+    meta.crossplane.io/maintainer: Crossplane Maintainers <info@crossplane.io>
+    meta.crossplane.io/source: github.com/crossplane/provider-aci
+    meta.crossplane.io/license: Apache-2.0
+    meta.crossplane.io/description: |
+      A aci that can be used to create Crossplane providers.
+spec:
+  package: jgomezve/provider-aci:v0.0.0-11.gdead9ba

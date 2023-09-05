@@ -1,0 +1,140 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    meta.helm.sh/release-name: crossplane
+    meta.helm.sh/release-namespace: crossplane-system
+  creationTimestamp: "2023-08-09T22:16:19Z"
+  labels:
+    app: crossplane
+    app.kubernetes.io/component: cloud-infrastructure-controller
+    app.kubernetes.io/instance: crossplane
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: crossplane
+    app.kubernetes.io/version: 1.13.2
+    helm.sh/chart: crossplane-1.13.2
+  name: crossplane
+  # resourceVersion: "1312"
+  # uid: f4599ea2-649a-41b5-8f82-9d9befd2bf71
+rules:
+- apiGroups:
+  - '*'
+  resources:
+  - '*'
+  verbs:
+  - '*'
+- apiGroups: 
+  - networking/aci.crossplane.io
+  resources:
+  - vrves
+  - vrves/status
+  - bridgedomains
+  - bridgedomains/status
+  verbs:
+  - '*'
+- apiGroups:
+  - aci.cisco.com
+  resources:
+  - networkzones
+  - networkzones/status
+  verbs:
+  - '*'
+- apiGroups:
+  - aci.cisco.com
+  resources:
+  - networkzones/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - aci.cisco.com
+  resources:
+  - networkzonesclaim
+  - networkzonesclaim/status
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  - customresourcedefinitions/status
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  - services
+  verbs:
+  - '*'
+- apiGroups:
+  - apiextensions.crossplane.io
+  - pkg.crossplane.io
+  - secrets.crossplane.io
+  resources:
+  - '*'
+  verbs:
+  - '*'
+- apiGroups:
+  - extensions
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+  - watch
+- apiGroups:
+  - ""
+  - coordination.k8s.io
+  resources:
+  - configmaps
+  - leases
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - watch
+  - delete
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - validatingwebhookconfigurations
+  - mutatingwebhookconfigurations
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - watch
+  - delete
+
+# kubectl patch clusterrole crossplane -p '{"rules":[{"apiGroups":["*"], "resources":["*"], "verbs":["*"]}]}}'

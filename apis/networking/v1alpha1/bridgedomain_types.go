@@ -27,8 +27,10 @@ import (
 
 // BridgeDomainParameters are the configurable fields of a BridgeDomain.
 type BridgeDomainParameters struct {
-	Tenant   string `json:"tenant"`
-	Vrf      string `json:"vrf"`
+	Name   string `json:"name"`
+	Tenant string `json:"tenant"`
+	Vrf    string `json:"vrf"`
+	// +kubebuilder:validation:Optional
 	ArpFlood string `json:"arpFlood"`
 }
 
