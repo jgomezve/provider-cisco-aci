@@ -159,7 +159,6 @@ func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.Ex
 
 	dn := fmt.Sprintf("uni/tn-%s/ctx-%s", cr.Spec.ForProvider.Tenant, cr.Spec.ForProvider.Name)
 	fvCtxCont, err := c.apicClient.Get(dn)
-
 	if err != nil {
 		if fmt.Sprintf("%s", err) != "Error retrieving Object: Object may not exist" {
 			return managed.ExternalObservation{}, err
